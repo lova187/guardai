@@ -4,8 +4,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   
-  // Настройки для GitHub Pages (если планируете деплой)
+  // Настройки для GitHub Pages (замените на имя вашего репозитория)
   base: process.env.NODE_ENV === 'production' ? '/guardai-self-defense/' : '/',
+  
+  // Публичная директория
+  publicDir: 'public',
   
   // Настройки для MediaPipe
   optimizeDeps: {
@@ -34,6 +37,12 @@ export default defineConfig({
           mediapipe: ['@mediapipe/tasks-vision']
         }
       }
+    }
+  },
+  
+  // Поддержка WASM файлов
+  assetsInclude: ['**/*.wasm', '**/*.task']
+})
     }
   },
   
