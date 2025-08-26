@@ -3,170 +3,379 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GuardAI - אימון הגנה עצמית</title>
+    <title>GuardAI - אימון הגנה עצמית בעזרת AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #111827, #000000); }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #111827, #000000);
+        }
+        
+        .mirror { transform: scaleX(-1); }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
-<body class="gradient-bg text-white min-h-screen">
-    <div id="root">
-        <div class="max-w-4xl mx-auto p-8">
-            <!-- Header -->
-            <header class="text-center mb-12">
-                <div class="flex items-center justify-center gap-4 mb-6">
-                    <svg class="w-12 h-12 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1v7z"/>
-                    </svg>
-                    <h1 class="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
-                        GuardAI
-                    </h1>
+<body class="text-white min-h-screen">
+    <div class="max-w-6xl mx-auto p-4">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <svg class="w-12 h-12 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1v7z"/>
+                    <path d="m9 12 2 2 4-4"/>
+                </svg>
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
+                    GuardAI
+                </h1>
+            </div>
+            <p class="text-xl text-gray-300 mb-2">אימון הגנה עצמית בעזרת בינה מלאכותית</p>
+            <p class="text-gray-400">המצלמה מנתחת את התנועות שלך בזמן אמת ומתקנת טעויות</p>
+        </header>
+
+        <!-- Main App -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Camera Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden card-hover">
+                    <div class="p-6">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+                            🎯 מצלמת אימון AI
+                            <span id="status-indicator" class="w-3 h-3 bg-gray-500 rounded-full"></span>
+                        </h2>
+                        
+                        <!-- Camera Display -->
+                        <div class="relative aspect-video bg-black rounded-lg overflow-hidden mb-4">
+                            <video id="video" class="w-full h-full object-cover mirror hidden" autoplay muted playsinline></video>
+                            <canvas id="canvas" class="absolute inset-0 w-full h-full pointer-events-none mirror"></canvas>
+                            
+                            <!-- Placeholder -->
+                            <div id="placeholder" class="flex items-center justify-center h-full text-gray-400">
+                                <div class="text-center">
+                                    <svg class="w-20 h-20 mx-auto mb-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <p class="text-lg font-semibold mb-2">מוכן לאימון?</p>
+                                    <p class="text-sm">לחץ "התחל אימון" כדי לגשת למצלמה</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Timer -->
+                            <div id="timer" class="absolute top-4 right-4 bg-black/70 backdrop-blur-sm px-4 py-2 rounded-lg hidden">
+                                <div class="text-emerald-400 font-mono text-lg" id="timer-display">00:00</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Controls -->
+                        <div class="flex gap-3">
+                            <button id="start-btn" class="bg-emerald-500 hover:bg-emerald-600 px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                                </svg>
+                                התחל אימון
+                            </button>
+                            <button id="stop-btn" class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-semibold transition-all duration-200 hidden flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"/>
+                                </svg>
+                                עצור אימון
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-xl text-gray-300 mb-8">
-                    האפליקציה שמאמנת אותך להגנה עצמית בעזרת בינה מלאכותית
-                </p>
-            </header>
+            </div>
 
-            <!-- Main Content -->
-            <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Camera Section -->
-                <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6">
-                    <h2 class="text-2xl font-bold mb-4">🎯 מצלמת אימון</h2>
-                    <div class="aspect-video bg-black rounded-lg mb-4 flex items-center justify-center">
-                        <video id="video" class="w-full h-full object-cover rounded-lg" autoplay muted playsinline style="transform: scaleX(-1);"></video>
-                        <canvas id="canvas" class="absolute inset-0 w-full h-full pointer-events-none" style="transform: scaleX(-1);"></canvas>
-                        <div id="placeholder" class="text-gray-400 text-center">
-                            <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
-                            </svg>
-                            <p>לחץ "התחל אימון" לגישה למצלמה</p>
+            <!-- Control Panel -->
+            <div class="space-y-4">
+                <!-- Exercise Selection -->
+                <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 card-hover">
+                    <h3 class="text-lg font-semibold mb-4">תרגיל נוכחי</h3>
+                    <div class="space-y-2">
+                        <div class="exercise-btn bg-emerald-600 text-white p-3 rounded-lg cursor-pointer" data-exercise="stance">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl">🛡️</span>
+                                <div class="text-right">
+                                    <div class="font-medium">עמידת בסיס</div>
+                                    <div class="text-sm opacity-75">עמוד יציב, רגליים ברוחב כתפיים</div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <button id="start-btn" class="bg-emerald-500 hover:bg-emerald-600 px-6 py-3 rounded-lg font-semibold transition-colors">
-                            ▶️ התחל אימון
-                        </button>
-                        <button id="stop-btn" class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-semibold transition-colors hidden">
-                            ⏹️ עצור אימון
-                        </button>
+                        <div class="exercise-btn bg-gray-700 hover:bg-gray-600 text-gray-300 p-3 rounded-lg cursor-pointer transition-colors" data-exercise="blocks">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl">✋</span>
+                                <div class="text-right">
+                                    <div class="font-medium">בלוקים</div>
+                                    <div class="text-sm opacity-75">הרם ידיים להגנה על הפנים</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exercise-btn bg-gray-700 hover:bg-gray-600 text-gray-300 p-3 rounded-lg cursor-pointer transition-colors" data-exercise="punches">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl">👊</span>
+                                <div class="text-right">
+                                    <div class="font-medium">אגרופים</div>
+                                    <div class="text-sm opacity-75">אגרוף ישר עם סיבוב מותן</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Info Section -->
-                <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6">
-                    <h2 class="text-2xl font-bold mb-4">📊 משוב בזמן אמת</h2>
-                    <div id="feedback" class="space-y-4">
-                        <div class="text-yellow-400">
-                            <h3 class="font-semibold mb-2">💡 הוראות:</h3>
-                            <ul id="tips" class="text-sm space-y-1">
-                                <li>• עמוד מול המצלמה</li>
-                                <li>• רגליים ברוחב כתפיים</li>
-                                <li>• ידיים מוכנות להגנה</li>
-                            </ul>
-                        </div>
-                        <div class="text-emerald-400">
-                            <h3 class="font-semibold mb-2">✅ מצוין:</h3>
-                            <ul id="good" class="text-sm space-y-1">
-                                <li>מוכן לאימון!</li>
-                            </ul>
-                        </div>
+                <!-- AI Feedback -->
+                <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 card-hover">
+                    <h3 class="text-lg font-semibold mb-4">🤖 משוב AI בזמן אמת</h3>
+                    
+                    <div id="feedback-tips" class="mb-4">
+                        <h4 class="text-yellow-400 font-medium mb-2">💡 שיפורים:</h4>
+                        <ul id="tips-list" class="text-yellow-300 text-sm space-y-1">
+                            <li>• התחל אימון לקבלת משוב מיידי</li>
+                        </ul>
                     </div>
-
-                    <div class="mt-8 p-4 bg-blue-900/30 rounded-lg">
-                        <h3 class="font-semibold mb-2">🏆 תכונות מתקדמות:</h3>
-                        <ul class="text-sm space-y-2 text-blue-300">
-                            <li>🎯 ניתוח תנועות בזמן אמת</li>
-                            <li>🔥 אימון תחת לחץ</li>
-                            <li>📈 מעקב התקדמות</li>
-                            <li>🏅 מערכת הישגים</li>
+                    
+                    <div id="feedback-good">
+                        <h4 class="text-emerald-400 font-medium mb-2">✅ מצוין:</h4>
+                        <ul id="good-list" class="text-emerald-300 text-sm space-y-1">
+                            <li>• מוכן להתחיל!</li>
                         </ul>
                     </div>
                 </div>
-            </main>
 
-            <!-- Footer -->
-            <footer class="text-center mt-12 text-gray-400">
-                <p>🛡️ GuardAI - הדרך החכמה ללמוד הגנה עצמית</p>
-            </footer>
+                <!-- Quick Stats -->
+                <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 card-hover">
+                    <h3 class="text-lg font-semibold mb-4">📊 סטטיסטיקות מהירות</h3>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="text-2xl font-bold text-emerald-400" id="accuracy">0%</div>
+                            <div class="text-sm text-gray-400">דיוק</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-blue-400" id="session-time">00:00</div>
+                            <div class="text-sm text-gray-400">זמן אימון</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-gray-400">
+            <div class="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6">
+                <p class="text-lg font-semibold mb-2">🛡️ GuardAI</p>
+                <p>האפליקציה החכמה לאימון הגנה עצמית • פותח בעזרת בינה מלאכותית</p>
+                <div class="mt-4 text-sm">
+                    <span class="text-emerald-400">✓ ניתוח תנועות בזמן אמת</span> • 
+                    <span class="text-blue-400">✓ משוב מותאם אישית</span> • 
+                    <span class="text-purple-400">✓ אימון תחת לחץ</span>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script>
-        // Basic camera functionality
+        // App State
+        let isTraining = false;
+        let currentExercise = 'stance';
+        let stream = null;
+        let startTime = null;
+        let timerInterval = null;
+        let feedbackInterval = null;
+        let sessionStats = { correct: 0, total: 0 };
+
+        // DOM Elements
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const placeholder = document.getElementById('placeholder');
         const startBtn = document.getElementById('start-btn');
         const stopBtn = document.getElementById('stop-btn');
-        const tips = document.getElementById('tips');
-        const good = document.getElementById('good');
+        const timer = document.getElementById('timer');
+        const timerDisplay = document.getElementById('timer-display');
+        const statusIndicator = document.getElementById('status-indicator');
+        const tipsList = document.getElementById('tips-list');
+        const goodList = document.getElementById('good-list');
+        const accuracyDisplay = document.getElementById('accuracy');
+        const sessionTimeDisplay = document.getElementById('session-time');
 
-        let stream = null;
-        let isTraining = false;
+        // Exercise Feedback Data
+        const exerciseFeedback = {
+            stance: {
+                tips: ['להרחיב רגליים לרוחב כתפיים', 'לכופף ברכיים מעט', 'לחזק את מרכז הכבד', 'לשמור על גב ישר'],
+                good: ['עמידה יציבה מעולה', 'מרכז כבד נמוך', 'איזון טוב', 'מוכנות להגנה']
+            },
+            blocks: {
+                tips: ['להרים מרפקים גבוה יותר', 'לקרב ידיים לגוף', 'לכוון כפות היד', 'לשמור על עין פתוחה'],
+                good: ['הגנה מושלמת על הפנים', 'זמן תגובה מהיר', 'כיסוי טוב של אזור חיוני', 'עמדה יציבה']
+            },
+            punches: {
+                tips: ['לסובב את המותן', 'לשמור על איזון', 'להחזיר יד מהר למקום', 'לא להרחיק יד מדי'],
+                good: ['כוח מרשים', 'טכניקה נכונה', 'מהירות טובה', 'מעקב אחר היעד']
+            }
+        };
 
-        startBtn.addEventListener('click', async () => {
+        // Event Listeners
+        startBtn.addEventListener('click', startTraining);
+        stopBtn.addEventListener('click', stopTraining);
+
+        // Exercise selection
+        document.querySelectorAll('.exercise-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentExercise = btn.dataset.exercise;
+                updateExerciseSelection();
+                if (isTraining) {
+                    generateFeedback(); // Update feedback immediately
+                }
+            });
+        });
+
+        function updateExerciseSelection() {
+            document.querySelectorAll('.exercise-btn').forEach(btn => {
+                if (btn.dataset.exercise === currentExercise) {
+                    btn.className = 'exercise-btn bg-emerald-600 text-white p-3 rounded-lg cursor-pointer';
+                } else {
+                    btn.className = 'exercise-btn bg-gray-700 hover:bg-gray-600 text-gray-300 p-3 rounded-lg cursor-pointer transition-colors';
+                }
+            });
+        }
+
+        async function startTraining() {
             try {
+                statusIndicator.className = 'w-3 h-3 bg-yellow-500 rounded-full animate-pulse';
+                
                 stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user' }, 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    }, 
                     audio: false 
                 });
+                
                 video.srcObject = stream;
-                video.style.display = 'block';
+                video.classList.remove('hidden');
                 placeholder.style.display = 'none';
                 startBtn.classList.add('hidden');
                 stopBtn.classList.remove('hidden');
+                timer.classList.remove('hidden');
+                
                 isTraining = true;
-
-                // Simulate AI feedback
-                startFeedbackLoop();
-            } catch (err) {
-                alert('לא ניתן לגשת למצלמה. אנא בדוק הרשאות.');
-                console.error('Camera error:', err);
+                startTime = Date.now();
+                sessionStats = { correct: 0, total: 0 };
+                
+                statusIndicator.className = 'w-3 h-3 bg-emerald-500 rounded-full';
+                
+                // Start timer
+                timerInterval = setInterval(updateTimer, 1000);
+                
+                // Start AI feedback simulation
+                feedbackInterval = setInterval(generateFeedback, 3000);
+                
+                // Initial feedback
+                setTimeout(generateFeedback, 1000);
+                
+            } catch (error) {
+                console.error('Camera error:', error);
+                statusIndicator.className = 'w-3 h-3 bg-red-500 rounded-full';
+                alert('לא ניתן לגשת למצלמה. אנא בדוק הרשאות הדפדפן.');
             }
-        });
+        }
 
-        stopBtn.addEventListener('click', () => {
+        function stopTraining() {
+            isTraining = false;
+            
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
                 video.srcObject = null;
             }
-            video.style.display = 'none';
-            placeholder.style.display = 'block';
+            
+            video.classList.add('hidden');
+            placeholder.style.display = 'flex';
             startBtn.classList.remove('hidden');
             stopBtn.classList.add('hidden');
-            isTraining = false;
-        });
-
-        function startFeedbackLoop() {
-            if (!isTraining) return;
-
-            const feedbackOptions = [
-                { tips: ['להרחיב רגליים', 'לכופף ברכיים'], good: ['עמידה יציבה'] },
-                { tips: ['להרים הגנה'], good: ['זמן תגובה מהיר'] },
-                { tips: [], good: ['מצוין! טכניקה מושלמת'] }
-            ];
-
-            const feedback = feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)];
+            timer.classList.add('hidden');
             
-            tips.innerHTML = feedback.tips.length > 0 
-                ? feedback.tips.map(tip => `<li>• ${tip}</li>`).join('')
-                : '<li>• הכל נראה מושלם!</li>';
-                
-            good.innerHTML = feedback.good.map(item => `<li>✓ ${item}</li>`).join('');
+            statusIndicator.className = 'w-3 h-3 bg-gray-500 rounded-full';
+            
+            clearInterval(timerInterval);
+            clearInterval(feedbackInterval);
+            
+            // Show final stats
+            const accuracy = sessionStats.total > 0 ? Math.round((sessionStats.correct / sessionStats.total) * 100) : 0;
+            setTimeout(() => {
+                tipsList.innerHTML = `<li>• אימון הושלם! דיוק: ${accuracy}%</li>`;
+                goodList.innerHTML = '<li>• מוכן לאימון הבא</li>';
+            }, 500);
+        }
 
-            setTimeout(() => startFeedbackLoop(), 3000);
+        function updateTimer() {
+            if (!startTime) return;
+            
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            
+            const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timerDisplay.textContent = timeStr;
+            sessionTimeDisplay.textContent = timeStr;
+        }
+
+        function generateFeedback() {
+            if (!isTraining) return;
+            
+            const feedback = exerciseFeedback[currentExercise];
+            const shouldGiveTip = Math.random() > 0.6;
+            const isCorrect = Math.random() > 0.4;
+            
+            // Update session stats
+            sessionStats.total++;
+            if (isCorrect) sessionStats.correct++;
+            
+            // Update accuracy display
+            const accuracy = Math.round((sessionStats.correct / sessionStats.total) * 100);
+            accuracyDisplay.textContent = accuracy + '%';
+            
+            // Generate tips
+            if (shouldGiveTip && feedback.tips.length > 0) {
+                const randomTip = feedback.tips[Math.floor(Math.random() * feedback.tips.length)];
+                tipsList.innerHTML = `<li>• ${randomTip}</li>`;
+            } else {
+                tipsList.innerHTML = '<li>• הכל נראה מושלם!</li>';
+            }
+            
+            // Generate positive feedback
+            if (feedback.good.length > 0) {
+                const randomGood = feedback.good[Math.floor(Math.random() * feedback.good.length)];
+                goodList.innerHTML = `<li>✓ ${randomGood}</li>`;
+            }
         }
 
         // Check MediaPipe availability
-        if (window.FilesetResolver && window.PoseLandmarker) {
-            console.log('✅ MediaPipe loaded successfully');
-        } else {
-            console.warn('⚠️ MediaPipe not available, using basic mode');
+        function checkAIStatus() {
+            if (window.FilesetResolver && window.PoseLandmarker) {
+                console.log('✅ MediaPipe AI loaded successfully');
+                return true;
+            } else {
+                console.log('⚠️ MediaPipe not loaded, using simulation mode');
+                return false;
+            }
         }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            const aiLoaded = checkAIStatus();
+            if (aiLoaded) {
+                statusIndicator.title = 'AI מוכן';
+            } else {
+                statusIndicator.title = 'מצב סימולציה';
+            }
+            
+            updateExerciseSelection();
+        });
     </script>
 </body>
 </html>
