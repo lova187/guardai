@@ -15,10 +15,7 @@ export default defineConfig({
               cacheName: 'jsdelivr-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-              },
-              cacheKeyWillBeUsed: async ({ request }) => {
-                return `${request.url}?v=1.0.0`;
+                maxAgeSeconds: 60 * 60 * 24 * 365
               }
             }
           }
@@ -48,7 +45,7 @@ export default defineConfig({
       }
     })
   ],
-  base: './',
+  base: '/guardai/',  // ← ВАЖНО! Имя вашего репозитория
   build: {
     outDir: 'dist',
     assetsDir: 'assets'
