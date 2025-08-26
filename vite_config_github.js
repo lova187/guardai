@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   
   // Настройки для GitHub Pages (замените на имя вашего репозитория)
-  base: process.env.NODE_ENV === 'production' ? '/guardai-self-defense/' : '/',
+base: process.env.NODE_ENV === 'production' ? '/guardai/' : '/',
   
   // Публичная директория
   publicDir: 'public',
