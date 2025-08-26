@@ -1,0 +1,10 @@
+<svg width="192" height="192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="#1a1a1a"/>
+  <circle cx="96" cy="76" r="20" fill="#00ff88" stroke="#fff" stroke-width="2"/>
+  <rect x="86" y="96" width="20" height="40" fill="#00ff88"/>
+  <rect x="76" y="106" width="15" height="3" fill="#fff"/>
+  <rect x="101" y="106" width="15" height="3" fill="#fff"/>
+  <rect x="86" y="136" width="8" height="30" fill="#00ff88"/>
+  <rect x="98" y="136" width="8" height="30" fill="#00ff88"/>
+  <text x="96" y="180" text-anchor="middle" fill="#fff" font-family="Arial" font-size="12" font-weight="bold">GUARD</text>
+</svg>
