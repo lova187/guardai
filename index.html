@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GuardAI – Pose Trainer</title>
+  <meta name="theme-color" content="#14b8a6" />
+  <link rel="stylesheet" href="./styles.css">
+  <!-- MediaPipe Tasks Vision bundle -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.js"></script>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>GuardAI – Pose Trainer</h1>
+      <p>On-device pose tracking (no API key needed). Works over HTTPS (GitHub Pages / Base44).</p>
+    </header>
+
+    <main>
+      <section class="stage">
+        <div class="video-wrap" id="wrap">
+          <video playsinline muted></video>
+          <canvas></canvas>
+        </div>
+        <div class="controls">
+          <button id="startBtn">Start</button>
+          <button id="stopBtn" disabled>Stop</button>
+        </div>
+      </section>
+
+      <section class="feedback">
+        <h2>Feedback</h2>
+        <div class="good" id="good"></div>
+        <div class="tips" id="tips"></div>
+      </section>
+    </main>
+
+    <footer>
+      <small>© GuardAI — Camera stays local. <a href="./README.html">README</a></small>
+    </footer>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

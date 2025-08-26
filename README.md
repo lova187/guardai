@@ -1,0 +1,43 @@
+# GuardAI Web Starter
+
+A minimal, production-ready static web app that tracks human pose *on-device* using MediaPipe Tasks Vision — no API key required.
+
+## Quick Start
+
+### 1) Run locally (HTTPS recommended for camera)
+Most browsers allow camera on `https://` or `http://localhost`.
+You can use any static server. Example:
+
+```bash
+# from repository root
+npx serve .
+# or
+npx http-server .
+```
+
+Open the printed URL and click **Start**.
+
+### 2) Deploy to GitHub Pages
+1. Create a new repo and push these files.
+2. In GitHub: Settings → Pages → Deploy from branch → `main` + `/` root.
+3. Wait for Pages to publish. The app uses HTTPS, so camera works.
+
+### 3) Deploy to Base44
+- Zip & upload this folder as a static site OR paste files into a new project section.
+- Ensure the **vision bundle** is allowed by the CSP (it loads from jsDelivr).
+- Works out of the box as it’s static (HTML/JS/CSS).
+
+## Files
+- `index.html` — UI + includes vision bundle
+- `src/main.js` — app logic (init camera, run pose, feedback)
+- `src/pose.js` — MediaPipe setup + rules + drawing
+- `base44.js` — metric sender stub (safe no-op by default)
+- `styles.css` — basic Tailwind-inspired theme
+- `package.json` — optional scripts
+- `README.html` — this README rendered as HTML for easy viewing
+
+## Notes
+- Requires user camera permission.
+- If you see no landmarks, ensure the **vision bundle** script has loaded and HTTPS is used.
+- iOS Safari: camera requires user gesture (click **Start**).
+
