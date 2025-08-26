@@ -1,0 +1,25 @@
+{
+  "name": "guardai",
+  "version": "1.0.0",
+  "description": "Virtual Self-Defense Trainer PWA",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext ts",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "typescript": "^5.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "vite-plugin-pwa": "^0.17.0"
+  },
+  "dependencies": {},
+  "keywords": ["pwa", "ai", "self-defense", "mediapipe", "pose-detection"],
+  "author": "Your Name",
+  "license": "MIT"
+}
