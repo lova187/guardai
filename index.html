@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,38 +8,46 @@
   <link rel="stylesheet" href="./styles.css">
   <!-- MediaPipe Tasks Vision bundle -->
   <script defer src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/vision_bundle.js"></script>
+  <script defer src="./app.js"></script>
 </head>
 <body>
   <div id="app">
     <header>
       <h1>GuardAI – Pose Trainer</h1>
-      <p>On-device pose tracking (no API key needed). Works over HTTPS (GitHub Pages / Base44).</p>
+      <p>On-device трекинг позы (без серверов и API-ключей). Работает по HTTPS (GitHub Pages / Base44).</p>
     </header>
 
     <main>
       <section class="stage">
         <div class="video-wrap" id="wrap">
-          <video playsinline muted></video>
-          <canvas></canvas>
+          <video id="video" playsinline muted></video>
+          <canvas id="overlay"></canvas>
         </div>
         <div class="controls">
-          <button id="startBtn">Start</button>
-          <button id="stopBtn" disabled>Stop</button>
+          <select id="cameraSelect" aria-label="Камера"></select>
+          <button id="startBtn">Старт</button>
+          <button id="stopBtn" disabled>Стоп</button>
+          <label class="switch">
+            <input type="checkbox" id="mirrorToggle" checked />
+            <span>Зеркало</span>
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="landmarksToggle" checked />
+            <span>Показывать точки</span>
+          </label>
         </div>
+        <p id="status" role="status" aria-live="polite">Готово.</p>
       </section>
 
-      <section class="feedback">
-        <h2>Feedback</h2>
-        <div class="good" id="good"></div>
-        <div class="tips" id="tips"></div>
+      <section class="tips">
+        <h2>Подсказки</h2>
+        <ul>
+          <li>Если видео чёрное на GitHub Pages — открой ссылку по HTTPS (https://...).</li>
+          <li>Дай разрешение на камеру и выбери нужную в списке.</li>
+          <li>Переключи «Зеркало» для фронталки.</li>
+        </ul>
       </section>
     </main>
-
-    <footer>
-      <small>© GuardAI — Camera stays local. <a href="./README.html">README</a></small>
-    </footer>
   </div>
-
-  <script type="module" src="./src/main.js"></script>
 </body>
 </html>
