@@ -1,30 +1,24 @@
 import './styles.css';
-import { Router } from './app/router';
-import { registerSW } from './pwa/registerSW';
-import { i18n } from './utils/i18n';
+
+console.log('GuardAI loading...');
 
 class App {
-  private router: Router;
-
   constructor() {
-    this.router = new Router();
     this.init();
   }
 
-  private async init(): Promise<void> {
+  private init(): void {
     try {
-      // Initialize i18n
-      await i18n.init();
-      
-      // Register service worker
-      await registerSW();
-      
-      // Start router
-      this.router.init();
-      
-      // Hide loading
+      // Hide loading screen
       const loading = document.getElementById('loading');
-      if (loading) loading.style.display = 'none';
+      if (loading) {
+        setTimeout(() => {
+          loading.style.display = 'none';
+        }, 1000);
+      }
+
+      // Show welcome message
+      this.showWelcome();
       
     } catch (error) {
       console.error('App initialization failed:', error);
@@ -32,11 +26,24 @@ class App {
     }
   }
 
+  private showWelcome(): void {
+    const app = document.getElementById('app');
+    if (app) {
+      app.innerHTML = `
+        <div style="text-align: center; color: white; padding: 50px;">
+          <h1 style="font-size: 3rem; margin-bottom: 1rem;">Welcome to GuardAI</h1>
+          <p style="font-size: 1.2rem; margin-bottom: 2rem;">AI-powered virtual self-defense trainer</p>
+          <p>Coming Soon...</p>
+        </div>
+      `;
+    }
+  }
+
   private showError(message: string): void {
     const app = document.getElementById('app');
     if (app) {
       app.innerHTML = `
-        <div class="error-screen">
+        <div style="text-align: center; color: white; padding: 50px;">
           <h1>Error</h1>
           <p>${message}</p>
           <button onclick="location.reload()">Reload</button>
@@ -47,4 +54,5 @@ class App {
 }
 
 // Start the app
+new App();
 new App();
